@@ -38,3 +38,37 @@ pub async fn wait(pid: u32, timeout: Duration, ct: CancellationToken) -> WaitRes
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn pid_already_exited() {
+        let ct = CancellationToken::new();
+        let r = wait(u32::MAX, Duration::from_secs(5), ct).await;
+        assert_eq!(r.status, "success");
+        assert!(r.detail.as_deref().unwrap().contains("already exited"));
+    }
+
+    #[tokio::test]
+    async fn pid_current_process_timeout() {
+        let ct = CancellationToken::new();
+        let r = wait(std::process::id(), Duration::from_secs(1), ct).await;
+        assert_eq!(r.status, "timeout");
+    }
+
+    #[tokio::test]
+    async fn pid_cancellation() {
+        let ct = CancellationToken::new();
+        let ct2 = ct.clone();
+        tokio::spawn(async move {
+            tokio::time::sleep(Duration::from_millis(200)).await;
+            ct2.cancel();
+        });
+
+        let r = wait(std::process::id(), Duration::from_secs(30), ct).await;
+        assert_eq!(r.status, "error");
+        assert!(r.detail.as_deref().unwrap().contains("cancelled"));
+    }
+}

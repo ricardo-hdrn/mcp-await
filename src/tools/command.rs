@@ -50,3 +50,59 @@ pub async fn wait(
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn command_immediate_success() {
+        let ct = CancellationToken::new();
+        let r = wait("true", Duration::from_secs(1), Duration::from_secs(5), ct).await;
+        assert_eq!(r.status, "success");
+        assert!(r.elapsed_seconds < 1.0);
+    }
+
+    #[tokio::test]
+    async fn command_timeout_on_failure() {
+        let ct = CancellationToken::new();
+        let r = wait("false", Duration::from_secs(1), Duration::from_secs(2), ct).await;
+        assert_eq!(r.status, "timeout");
+    }
+
+    #[tokio::test]
+    async fn command_stdout_captured() {
+        let ct = CancellationToken::new();
+        let r = wait(
+            "echo hello_world",
+            Duration::from_secs(1),
+            Duration::from_secs(5),
+            ct,
+        )
+        .await;
+        assert_eq!(r.status, "success");
+        assert!(r.detail.as_deref().unwrap().contains("hello_world"));
+    }
+
+    #[tokio::test]
+    async fn command_cancellation() {
+        let ct = CancellationToken::new();
+        let ct2 = ct.clone();
+        tokio::spawn(async move {
+            tokio::time::sleep(Duration::from_millis(200)).await;
+            ct2.cancel();
+        });
+
+        // Use "false" (exits immediately with non-zero) so the loop reaches
+        // the cancellation check during the inter-retry sleep.
+        let r = wait(
+            "false",
+            Duration::from_secs(60),
+            Duration::from_secs(300),
+            ct,
+        )
+        .await;
+        assert_eq!(r.status, "error");
+        assert!(r.detail.as_deref().unwrap().contains("cancelled"));
+    }
+}

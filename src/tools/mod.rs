@@ -15,9 +15,9 @@ use std::time::Duration;
 use rmcp::{
     handler::server::{router::tool::ToolRouter, wrapper::Parameters},
     model::*,
-    schemars, tool, tool_handler, tool_router,
+    schemars,
     service::RequestContext,
-    RoleServer, ServerHandler,
+    tool, tool_handler, tool_router, RoleServer, ServerHandler,
 };
 use tokio::sync::RwLock;
 use tokio_util::sync::CancellationToken;
@@ -320,9 +320,12 @@ impl NotifyServer {
         let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
         let host = p.host.clone();
         let port_num = p.port;
-        self.handle_watch(ctx, p.blocking.unwrap_or(true), "port", move |ct| async move {
-            port::wait(&host, port_num, timeout, ct).await
-        })
+        self.handle_watch(
+            ctx,
+            p.blocking.unwrap_or(true),
+            "port",
+            move |ct| async move { port::wait(&host, port_num, timeout, ct).await },
+        )
         .await
     }
 
@@ -337,9 +340,12 @@ impl NotifyServer {
         let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
         let path = p.path.clone();
         let event = p.event.clone();
-        self.handle_watch(ctx, p.blocking.unwrap_or(true), "file", move |ct| async move {
-            file::wait(&path, &event, timeout, ct).await
-        })
+        self.handle_watch(
+            ctx,
+            p.blocking.unwrap_or(true),
+            "file",
+            move |ct| async move { file::wait(&path, &event, timeout, ct).await },
+        )
         .await
     }
 
@@ -354,9 +360,12 @@ impl NotifyServer {
         let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
         let url_str = p.url.clone();
         let expected = p.expected_status.unwrap_or(200);
-        self.handle_watch(ctx, p.blocking.unwrap_or(true), "url", move |ct| async move {
-            url::wait(&url_str, expected, timeout, ct).await
-        })
+        self.handle_watch(
+            ctx,
+            p.blocking.unwrap_or(true),
+            "url",
+            move |ct| async move { url::wait(&url_str, expected, timeout, ct).await },
+        )
         .await
     }
 
@@ -370,9 +379,12 @@ impl NotifyServer {
     ) -> Result<CallToolResult, ErrorData> {
         let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
         let pid_num = p.pid;
-        self.handle_watch(ctx, p.blocking.unwrap_or(true), "pid", move |ct| async move {
-            pid::wait(pid_num, timeout, ct).await
-        })
+        self.handle_watch(
+            ctx,
+            p.blocking.unwrap_or(true),
+            "pid",
+            move |ct| async move { pid::wait(pid_num, timeout, ct).await },
+        )
         .await
     }
 
@@ -386,9 +398,12 @@ impl NotifyServer {
     ) -> Result<CallToolResult, ErrorData> {
         let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
         let container = p.container.clone();
-        self.handle_watch(ctx, p.blocking.unwrap_or(true), "docker", move |ct| async move {
-            docker::wait(&container, timeout, ct).await
-        })
+        self.handle_watch(
+            ctx,
+            p.blocking.unwrap_or(true),
+            "docker",
+            move |ct| async move { docker::wait(&container, timeout, ct).await },
+        )
         .await
     }
 
@@ -403,9 +418,12 @@ impl NotifyServer {
         let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
         let run_id = p.run_id.clone();
         let repo = p.repo.clone();
-        self.handle_watch(ctx, p.blocking.unwrap_or(true), "ghrun", move |ct| async move {
-            ghrun::wait(&run_id, repo.as_deref(), timeout, ct).await
-        })
+        self.handle_watch(
+            ctx,
+            p.blocking.unwrap_or(true),
+            "ghrun",
+            move |ct| async move { ghrun::wait(&run_id, repo.as_deref(), timeout, ct).await },
+        )
         .await
     }
 
@@ -420,9 +438,12 @@ impl NotifyServer {
         let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
         let interval = Duration::from_secs(p.interval_seconds.unwrap_or(5));
         let cmd = p.command.clone();
-        self.handle_watch(ctx, p.blocking.unwrap_or(true), "command", move |ct| async move {
-            command::wait(&cmd, interval, timeout, ct).await
-        })
+        self.handle_watch(
+            ctx,
+            p.blocking.unwrap_or(true),
+            "command",
+            move |ct| async move { command::wait(&cmd, interval, timeout, ct).await },
+        )
         .await
     }
 
@@ -547,5 +568,85 @@ impl ServerHandler for NotifyServer {
                 meta: None,
             }],
         })
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn wait_result_success_fields() {
+        let r = WaitResult::success(Duration::from_secs(1), Some("ok".into()));
+        assert_eq!(r.status, "success");
+        assert!((r.elapsed_seconds - 1.0).abs() < 0.01);
+        assert_eq!(r.detail.as_deref(), Some("ok"));
+    }
+
+    #[test]
+    fn wait_result_timeout_fields() {
+        let r = WaitResult::timeout(Duration::from_millis(2500), None);
+        assert_eq!(r.status, "timeout");
+        assert!((r.elapsed_seconds - 2.5).abs() < 0.01);
+        assert!(r.detail.is_none());
+    }
+
+    #[test]
+    fn wait_result_error_fields() {
+        let r = WaitResult::error(Duration::ZERO, Some("boom".into()));
+        assert_eq!(r.status, "error");
+        assert_eq!(r.detail.as_deref(), Some("boom"));
+    }
+
+    #[test]
+    fn wait_result_serialization_omits_null_detail() {
+        let r = WaitResult::success(Duration::from_secs(1), None);
+        let json: serde_json::Value = serde_json::to_value(&r).unwrap();
+        assert!(json.get("status").is_some());
+        assert!(json.get("elapsed_seconds").is_some());
+        assert!(json.get("detail").is_none());
+    }
+
+    #[test]
+    fn watch_status_serialization() {
+        assert_eq!(
+            serde_json::to_string(&WatchStatus::Watching).unwrap(),
+            "\"watching\""
+        );
+        assert_eq!(
+            serde_json::to_string(&WatchStatus::Fulfilled).unwrap(),
+            "\"fulfilled\""
+        );
+        assert_eq!(
+            serde_json::to_string(&WatchStatus::Timeout).unwrap(),
+            "\"timeout\""
+        );
+        assert_eq!(
+            serde_json::to_string(&WatchStatus::Error).unwrap(),
+            "\"error\""
+        );
+        assert_eq!(
+            serde_json::to_string(&WatchStatus::Cancelled).unwrap(),
+            "\"cancelled\""
+        );
+    }
+
+    #[test]
+    fn generate_watch_id_increments() {
+        let server = NotifyServer::new();
+        assert_eq!(server.generate_watch_id("port"), "port-1");
+        assert_eq!(server.generate_watch_id("port"), "port-2");
+        assert_eq!(server.generate_watch_id("file"), "file-3");
+    }
+
+    #[test]
+    fn into_call_tool_result_success_vs_error() {
+        let success = WaitResult::success(Duration::ZERO, None);
+        let result = success.into_call_tool_result();
+        assert!(!result.is_error.unwrap_or(false));
+
+        let error = WaitResult::error(Duration::ZERO, Some("fail".into()));
+        let result = error.into_call_tool_result();
+        assert!(result.is_error.unwrap_or(false));
     }
 }
