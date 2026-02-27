@@ -110,26 +110,44 @@ async fn run_cli(cmd: Command) -> Result<(), Box<dyn std::error::Error>> {
     let ct = CancellationToken::new();
 
     let result = match cmd {
-        Command::Port { host, port, timeout } => {
-            tools::port::wait(&host, port, Duration::from_secs(timeout), ct).await
-        }
-        Command::File { path, event, timeout } => {
-            tools::file::wait(&path, &event, Duration::from_secs(timeout), ct).await
-        }
-        Command::Url { url, status, timeout } => {
-            tools::url::wait(&url, status, Duration::from_secs(timeout), ct).await
-        }
+        Command::Port {
+            host,
+            port,
+            timeout,
+        } => tools::port::wait(&host, port, Duration::from_secs(timeout), ct).await,
+        Command::File {
+            path,
+            event,
+            timeout,
+        } => tools::file::wait(&path, &event, Duration::from_secs(timeout), ct).await,
+        Command::Url {
+            url,
+            status,
+            timeout,
+        } => tools::url::wait(&url, status, Duration::from_secs(timeout), ct).await,
         Command::Pid { pid, timeout } => {
             tools::pid::wait(pid, Duration::from_secs(timeout), ct).await
         }
         Command::Docker { container, timeout } => {
             tools::docker::wait(&container, Duration::from_secs(timeout), ct).await
         }
-        Command::GhRun { run_id, repo, timeout } => {
-            tools::ghrun::wait(&run_id, repo.as_deref(), Duration::from_secs(timeout), ct).await
-        }
-        Command::Cmd { command, interval, timeout } => {
-            tools::command::wait(&command, Duration::from_secs(interval), Duration::from_secs(timeout), ct).await
+        Command::GhRun {
+            run_id,
+            repo,
+            timeout,
+        } => tools::ghrun::wait(&run_id, repo.as_deref(), Duration::from_secs(timeout), ct).await,
+        Command::Cmd {
+            command,
+            interval,
+            timeout,
+        } => {
+            tools::command::wait(
+                &command,
+                Duration::from_secs(interval),
+                Duration::from_secs(timeout),
+                ct,
+            )
+            .await
         }
         Command::Serve => unreachable!(),
     };

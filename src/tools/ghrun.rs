@@ -25,10 +25,7 @@ pub async fn wait(
     let mut child = match cmd.spawn() {
         Ok(c) => c,
         Err(e) => {
-            return WaitResult::error(
-                start.elapsed(),
-                Some(format!("Failed to run gh: {}", e)),
-            )
+            return WaitResult::error(start.elapsed(), Some(format!("Failed to run gh: {}", e)))
         }
     };
 

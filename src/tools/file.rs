@@ -72,9 +72,7 @@ pub async fn wait(path: &str, event: &str, timeout: Duration, ct: CancellationTo
     let target_abs = if target.is_absolute() {
         target.clone()
     } else {
-        std::env::current_dir()
-            .unwrap_or_default()
-            .join(&target)
+        std::env::current_dir().unwrap_or_default().join(&target)
     };
 
     let deadline = tokio::time::Instant::now() + timeout;
@@ -110,5 +108,88 @@ pub async fn wait(path: &str, event: &str, timeout: Duration, ct: CancellationTo
                 }
             }
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    async fn file_already_exists() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("existing.txt");
+        std::fs::write(&path, "hello").unwrap();
+
+        let ct = CancellationToken::new();
+        let r = wait(path.to_str().unwrap(), "create", Duration::from_secs(5), ct).await;
+        assert_eq!(r.status, "success");
+        assert!(r.detail.as_deref().unwrap().contains("already exists"));
+    }
+
+    #[tokio::test]
+    async fn file_already_absent() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("nonexistent.txt");
+
+        let ct = CancellationToken::new();
+        let r = wait(path.to_str().unwrap(), "delete", Duration::from_secs(5), ct).await;
+        assert_eq!(r.status, "success");
+        assert!(r.detail.as_deref().unwrap().contains("already absent"));
+    }
+
+    #[tokio::test]
+    async fn file_create_event() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("new_file.txt");
+        let path_clone = path.clone();
+
+        let ct = CancellationToken::new();
+        tokio::spawn(async move {
+            tokio::time::sleep(Duration::from_millis(300)).await;
+            std::fs::write(&path_clone, "created").unwrap();
+        });
+
+        let r = wait(path.to_str().unwrap(), "create", Duration::from_secs(5), ct).await;
+        assert_eq!(r.status, "success");
+    }
+
+    #[tokio::test]
+    async fn file_modify_event() {
+        let dir = tempfile::tempdir().unwrap();
+        let path = dir.path().join("mod_file.txt");
+        std::fs::write(&path, "initial").unwrap();
+        let path_clone = path.clone();
+
+        let ct = CancellationToken::new();
+        tokio::spawn(async move {
+            tokio::time::sleep(Duration::from_millis(300)).await;
+            std::fs::write(&path_clone, "modified").unwrap();
+        });
+
+        let r = wait(path.to_str().unwrap(), "modify", Duration::from_secs(5), ct).await;
+        assert_eq!(r.status, "success");
+    }
+
+    #[tokio::test]
+    async fn file_invalid_event() {
+        let ct = CancellationToken::new();
+        let r = wait("/tmp/whatever", "foobar", Duration::from_secs(1), ct).await;
+        assert_eq!(r.status, "error");
+        assert!(r.detail.as_deref().unwrap().contains("Invalid event type"));
+    }
+
+    #[tokio::test]
+    async fn file_parent_dir_missing() {
+        let ct = CancellationToken::new();
+        let r = wait(
+            "/no/such/dir/file.txt",
+            "create",
+            Duration::from_secs(1),
+            ct,
+        )
+        .await;
+        assert_eq!(r.status, "error");
+        assert!(r.detail.as_deref().unwrap().contains("does not exist"));
     }
 }

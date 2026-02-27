@@ -1,0 +1,44 @@
+image: rust:1.83-bookworm
+
+stages:
+  - check
+  - test
+  - build
+
+variables:
+  CARGO_HOME: "${CI_PROJECT_DIR}/.cargo"
+
+cache:
+  key: "${CI_COMMIT_REF_SLUG}"
+  paths:
+    - .cargo/registry/
+    - .cargo/git/
+    - target/
+
+fmt:
+  stage: check
+  script:
+    - rustup component add rustfmt
+    - cargo fmt --check
+
+clippy:
+  stage: check
+  script:
+    - rustup component add clippy
+    - cargo clippy --all-targets -- -D warnings
+
+test:
+  stage: test
+  before_script:
+    - apt-get update -qq && apt-get install -y -qq curl
+  script:
+    - cargo test --verbose
+
+build:
+  stage: build
+  script:
+    - cargo build --release
+  artifacts:
+    paths:
+      - target/release/mcp-watch
+    expire_in: 7 days

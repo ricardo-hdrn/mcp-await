@@ -15,7 +15,16 @@ pub async fn wait(
 
     loop {
         let result = Command::new("curl")
-            .args(["-s", "-o", "/dev/null", "-w", "%{http_code}", "--max-time", "10", url])
+            .args([
+                "-s",
+                "-o",
+                "/dev/null",
+                "-w",
+                "%{http_code}",
+                "--max-time",
+                "10",
+                url,
+            ])
             .output()
             .await;
 
@@ -36,10 +45,7 @@ pub async fn wait(
         if start.elapsed() >= timeout {
             return WaitResult::timeout(
                 start.elapsed(),
-                Some(format!(
-                    "{} did not return status {}",
-                    url, expected_status
-                )),
+                Some(format!("{} did not return status {}", url, expected_status)),
             );
         }
 
@@ -49,5 +55,40 @@ pub async fn wait(
             }
             _ = tokio::time::sleep(Duration::from_secs(2)) => {}
         }
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+    use tokio::io::AsyncWriteExt;
+    use tokio::net::TcpListener;
+
+    #[tokio::test]
+    async fn url_success_localhost() {
+        let listener = TcpListener::bind("127.0.0.1:0").await.unwrap();
+        let port = listener.local_addr().unwrap().port();
+
+        tokio::spawn(async move {
+            loop {
+                if let Ok((mut stream, _)) = listener.accept().await {
+                    let response = "HTTP/1.1 200 OK\r\nContent-Length: 0\r\n\r\n";
+                    let _ = stream.write_all(response.as_bytes()).await;
+                    let _ = stream.shutdown().await;
+                }
+            }
+        });
+
+        let ct = CancellationToken::new();
+        let url = format!("http://127.0.0.1:{}", port);
+        let r = wait(&url, 200, Duration::from_secs(10), ct).await;
+        assert_eq!(r.status, "success");
+    }
+
+    #[tokio::test]
+    async fn url_timeout_bad_port() {
+        let ct = CancellationToken::new();
+        let r = wait("http://127.0.0.1:19222", 200, Duration::from_secs(3), ct).await;
+        assert_eq!(r.status, "timeout");
     }
 }

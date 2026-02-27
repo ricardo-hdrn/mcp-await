@@ -72,3 +72,16 @@ pub async fn wait(container: &str, timeout: Duration, ct: CancellationToken) -> 
         }
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[tokio::test]
+    #[ignore] // requires Docker daemon — run with: cargo test -- --ignored
+    async fn docker_wait_nonexistent_container() {
+        let ct = CancellationToken::new();
+        let r = wait("nonexistent_container_xxx", Duration::from_secs(5), ct).await;
+        assert_eq!(r.status, "error");
+    }
+}
