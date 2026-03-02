@@ -7,7 +7,7 @@ use rmcp::{transport::stdio, ServiceExt};
 use tokio_util::sync::CancellationToken;
 
 #[derive(Parser)]
-#[command(name = "mcp-watch", about = "Condition watcher — MCP server & CLI")]
+#[command(name = "mcp-await", about = "Condition watcher — MCP server & CLI")]
 struct Cli {
     #[command(subcommand)]
     command: Option<Command>,
@@ -95,7 +95,7 @@ async fn run_server() -> Result<(), Box<dyn std::error::Error>> {
         .with_ansi(false)
         .init();
 
-    tracing::info!("Starting mcp-watch server");
+    tracing::info!("Starting mcp-await server");
 
     let service = tools::NotifyServer::new()
         .serve(stdio())

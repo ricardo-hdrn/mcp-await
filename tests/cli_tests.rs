@@ -4,7 +4,7 @@ use std::net::TcpListener;
 
 #[allow(deprecated)]
 fn cmd() -> Command {
-    Command::cargo_bin("mcp-watch").unwrap()
+    Command::cargo_bin("mcp-await").unwrap()
 }
 
 #[test]

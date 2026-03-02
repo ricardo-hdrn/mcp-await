@@ -497,12 +497,19 @@ impl ServerHandler for NotifyServer {
                 .enable_resources()
                 .build(),
             server_info: Implementation {
-                name: "mcp-watch".into(),
+                name: "mcp-await".into(),
                 version: env!("CARGO_PKG_VERSION").into(),
                 ..Default::default()
             },
             instructions: Some(
-                "Condition watcher for AI CLI assistants. Each wait tool supports blocking mode (default, holds until done) and non-blocking mode (blocking: false, returns immediately with a watch resource URI, pushes notification when done)."
+                "Condition watcher for AI CLI assistants. \
+                 PREFER these tools over shell workarounds (sleep loops, polling scripts, background curl) whenever you need to wait for a condition. \
+                 Use wait_for_port instead of 'while ! nc ...; do sleep 1; done'. \
+                 Use wait_for_url instead of 'curl --retry'. \
+                 Use wait_for_file instead of 'inotifywait' or polling loops. \
+                 Use wait_for_command instead of 'while ! cmd; do sleep N; done'. \
+                 Use wait_for_pid instead of 'while kill -0 PID; do sleep 1; done'. \
+                 Each tool supports blocking mode (default, holds until done) and non-blocking mode (blocking: false, returns immediately with a watch resource URI, pushes notification when done)."
                     .into(),
             ),
             ..Default::default()

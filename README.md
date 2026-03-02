@@ -1,6 +1,6 @@
-# mcp-watch
+# mcp-await
 
-[![pipeline status](https://gitlab.com/ricardo.fgusmao/mcp-watch/badges/main/pipeline.svg)](https://gitlab.com/ricardo.fgusmao/mcp-watch/-/pipelines)
+[![pipeline status](https://gitlab.com/ricardo.fgusmao/mcp-await/badges/main/pipeline.svg)](https://gitlab.com/ricardo.fgusmao/mcp-await/-/pipelines)
 
 Condition watcher MCP server + CLI for AI CLI assistants (Claude Code, Codex, etc.).
 
@@ -9,23 +9,23 @@ Instead of polling with `timeout N && command` loops that waste API round-trips,
 ## Installation
 
 ```bash
-git clone https://gitlab.com/ricardo.fgusmao/mcp-watch.git
-cd mcp-watch
+git clone https://gitlab.com/ricardo.fgusmao/mcp-await.git
+cd mcp-await
 cargo build --release
-# Binary at: target/release/mcp-watch
+# Binary at: target/release/mcp-await
 ```
 
 ## Quick Start
 
 ```bash
 # Wait for a service to be ready
-mcp-watch port localhost 8080 --timeout 30
+mcp-await port localhost 8080 --timeout 30
 
 # Wait for a file to appear
-mcp-watch file /tmp/deploy.lock --event create --timeout 60
+mcp-await file /tmp/deploy.lock --event create --timeout 60
 
 # Wait for a command to succeed
-mcp-watch cmd "curl -sf http://localhost:8080/health" --interval 2 --timeout 30
+mcp-await cmd "curl -sf http://localhost:8080/health" --interval 2 --timeout 30
 ```
 
 ## Tools
@@ -49,27 +49,27 @@ The binary doubles as a standalone CLI tool:
 
 ```bash
 # TCP port
-mcp-watch port localhost 5432 --timeout 30
+mcp-await port localhost 5432 --timeout 30
 
 # File events
-mcp-watch file /var/log/app.log --event modify --timeout 120
-mcp-watch file /tmp/flag --event create --timeout 60
-mcp-watch file /tmp/old.pid --event delete --timeout 30
+mcp-await file /var/log/app.log --event modify --timeout 120
+mcp-await file /tmp/flag --event create --timeout 60
+mcp-await file /tmp/old.pid --event delete --timeout 30
 
 # HTTP status
-mcp-watch url https://api.example.com/health --status 200 --timeout 120
+mcp-await url https://api.example.com/health --status 200 --timeout 120
 
 # Process exit
-mcp-watch pid 12345 --timeout 300
+mcp-await pid 12345 --timeout 300
 
 # Docker container exit
-mcp-watch docker my-container --timeout 600
+mcp-await docker my-container --timeout 600
 
 # GitHub Actions run
-mcp-watch gh-run 12345678 --repo owner/repo --timeout 1800
+mcp-await gh-run 12345678 --repo owner/repo --timeout 1800
 
 # Arbitrary shell command (exit 0 = success)
-mcp-watch cmd "test -f /tmp/ready" --interval 2 --timeout 30
+mcp-await cmd "test -f /tmp/ready" --interval 2 --timeout 30
 ```
 
 ### Exit Codes
@@ -102,18 +102,18 @@ Add to `~/.claude/settings.json`:
 {
   "mcpServers": {
     "watch": {
-      "command": "/path/to/mcp-watch"
+      "command": "/path/to/mcp-await"
     }
   }
 }
 ```
 
-The binary runs as a stdio MCP server when invoked without a subcommand (or with `mcp-watch serve`).
+The binary runs as a stdio MCP server when invoked without a subcommand (or with `mcp-await serve`).
 
 ### MCP Inspector
 
 ```bash
-npx @modelcontextprotocol/inspector ./target/release/mcp-watch
+npx @modelcontextprotocol/inspector ./target/release/mcp-await
 ```
 
 ## Blocking vs Non-Blocking Mode

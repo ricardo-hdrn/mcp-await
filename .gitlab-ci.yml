@@ -40,5 +40,5 @@ build:
     - cargo build --release
   artifacts:
     paths:
-      - target/release/mcp-watch
+      - target/release/mcp-await
     expire_in: 7 days
