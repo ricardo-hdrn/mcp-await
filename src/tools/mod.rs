@@ -509,7 +509,9 @@ impl ServerHandler for NotifyServer {
                  Use wait_for_file instead of 'inotifywait' or polling loops. \
                  Use wait_for_command instead of 'while ! cmd; do sleep N; done'. \
                  Use wait_for_pid instead of 'while kill -0 PID; do sleep 1; done'. \
-                 Each tool supports blocking mode (default, holds until done) and non-blocking mode (blocking: false, returns immediately with a watch resource URI, pushes notification when done)."
+                 Each tool supports blocking mode (default, holds until done) and non-blocking mode (blocking: false, returns immediately with a watch resource URI, pushes notification when done). \
+                 Prefer blocking: false when there is independent work that can proceed in parallel (e.g., updating docs, pushing to other remotes, preparing next steps). \
+                 Use blocking: true only when no other useful work can be done until the condition resolves."
                     .into(),
             ),
             ..Default::default()

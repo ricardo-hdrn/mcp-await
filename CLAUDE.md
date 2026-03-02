@@ -114,7 +114,7 @@ In `~/.claude.json`:
 - `RawResource`, `ResourceContents`, `ReadResourceResult` don't impl Default — specify all fields explicitly
 - `Implementation` struct: use `..Default::default()` for extra fields
 - Non-blocking: clone `watch_id` to `bg_watch_id` before moving into spawned task
-- Server `instructions` field drives agent tool selection — be directive ("PREFER these tools over shell workarounds")
+- Server `instructions` field drives agent tool selection — be directive ("PREFER these tools over shell workarounds"). Include guidance on blocking modes: prefer `blocking: false` when independent work can proceed in parallel, use `blocking: true` only when nothing else can be done until condition resolves.
 
 ## What's Next / TODO
 
