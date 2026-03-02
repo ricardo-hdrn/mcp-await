@@ -1,18 +1,23 @@
 # mcp-await
 
-[![pipeline status](https://gitlab.com/ricardo.fgusmao/mcp-await/badges/main/pipeline.svg)](https://gitlab.com/ricardo.fgusmao/mcp-await/-/pipelines)
+[![crates.io](https://img.shields.io/crates/v/mcp-await.svg)](https://crates.io/crates/mcp-await)
+[![pipeline status](https://gitlab.com/ricardo.fgusmao/mcp-await/badges/develop/pipeline.svg)](https://gitlab.com/ricardo.fgusmao/mcp-await/-/pipelines)
+[![license](https://img.shields.io/crates/l/mcp-await.svg)](LICENSE)
 
-Condition watcher MCP server + CLI for AI CLI assistants (Claude Code, Codex, etc.).
+Condition watcher MCP server + CLI for AI CLI assistants (Claude Code, Codex, Cursor, etc.).
 
-Instead of polling with `timeout N && command` loops that waste API round-trips, call a watch tool once — it handles the monitoring and delivers the result.
+Instead of polling with `sleep` loops and `curl --retry` that waste API round-trips, call a wait tool once — it blocks until the condition is met and returns the result.
 
 ## Installation
 
 ```bash
+# From crates.io
+cargo install mcp-await
+
+# From source
 git clone https://gitlab.com/ricardo.fgusmao/mcp-await.git
 cd mcp-await
 cargo build --release
-# Binary at: target/release/mcp-await
 ```
 
 ## Quick Start
@@ -96,12 +101,12 @@ All commands output JSON:
 
 ### Claude Code
 
-Add to `~/.claude/settings.json`:
+Add to `~/.claude.json`:
 
 ```json
 {
   "mcpServers": {
-    "watch": {
+    "await": {
       "command": "/path/to/mcp-await"
     }
   }

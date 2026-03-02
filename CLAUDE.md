@@ -101,7 +101,7 @@ In `~/.claude.json`:
 {
   "mcpServers": {
     "await": {
-      "command": "/home/ricardo/dev/hdrn/mcp-notify-me/target/release/mcp-await"
+      "command": "/path/to/mcp-await"
     }
   }
 }
