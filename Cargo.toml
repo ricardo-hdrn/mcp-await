@@ -5,6 +5,9 @@ edition = "2021"
 description = "Condition watcher MCP server + CLI for AI assistants — block until a port opens, a file changes, a URL responds, a process exits, and more"
 license = "MIT"
 repository = "https://gitlab.com/ricardo.fgusmao/mcp-await"
+homepage = "https://gitlab.com/ricardo.fgusmao/mcp-await"
+documentation = "https://docs.rs/mcp-await"
+readme = "README.md"
 keywords = ["mcp", "ai", "cli", "watcher", "await"]
 categories = ["command-line-utilities", "asynchronous"]
 
