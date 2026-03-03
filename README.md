@@ -8,6 +8,8 @@ Condition watcher MCP server + CLI for AI CLI assistants (Claude Code, Codex, Cu
 
 Instead of polling with `sleep` loops and `curl --retry` that waste API round-trips, call a wait tool once — it blocks until the condition is met and returns the result.
 
+![demo](docs/images/demo.gif)
+
 ## Installation
 
 ```bash
