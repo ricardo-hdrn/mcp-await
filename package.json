@@ -5,7 +5,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://gitlab.com/ricardo.fgusmao/mcp-await.git"
+    "url": "https://github.com/ricardo-hdrn/mcp-await.git"
   },
   "keywords": ["mcp", "ai", "cli", "watcher", "await"]
 }
