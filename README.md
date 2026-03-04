@@ -1,7 +1,7 @@
 # mcp-await
 
 [![crates.io](https://img.shields.io/crates/v/mcp-await.svg)](https://crates.io/crates/mcp-await)
-[![pipeline status](https://gitlab.com/ricardo.fgusmao/mcp-await/badges/develop/pipeline.svg)](https://gitlab.com/ricardo.fgusmao/mcp-await/-/pipelines)
+[![CI](https://github.com/ricardo-hdrn/mcp-await/actions/workflows/ci.yml/badge.svg?branch=develop)](https://github.com/ricardo-hdrn/mcp-await/actions/workflows/ci.yml)
 [![license](https://img.shields.io/crates/l/mcp-await.svg)](LICENSE)
 
 Condition watcher MCP server + CLI for AI CLI assistants (Claude Code, Codex, Cursor, etc.).
@@ -17,7 +17,7 @@ Instead of polling with `sleep` loops and `curl --retry` that waste API round-tr
 cargo install mcp-await
 
 # From source
-git clone https://gitlab.com/ricardo.fgusmao/mcp-await.git
+git clone https://github.com/ricardo-hdrn/mcp-await.git
 cd mcp-await
 cargo build --release
 ```
