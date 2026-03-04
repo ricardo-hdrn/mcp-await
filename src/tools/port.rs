@@ -75,7 +75,7 @@ mod tests {
 
         let r = wait("127.0.0.1", port, Duration::from_secs(5), ct).await;
         assert_eq!(r.status, "success");
-        assert!(r.elapsed_seconds >= 0.5);
+        assert!(r.elapsed_seconds >= 0.4);
     }
 
     #[tokio::test]

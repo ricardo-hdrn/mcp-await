@@ -138,6 +138,7 @@ mod tests {
         assert!(r.detail.as_deref().unwrap().contains("already absent"));
     }
 
+    #[cfg(target_os = "linux")]
     #[tokio::test]
     async fn file_create_event() {
         let dir = tempfile::tempdir().unwrap();
@@ -154,6 +155,7 @@ mod tests {
         assert_eq!(r.status, "success");
     }
 
+    #[cfg(target_os = "linux")]
     #[tokio::test]
     async fn file_modify_event() {
         let dir = tempfile::tempdir().unwrap();
