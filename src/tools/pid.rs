@@ -40,6 +40,7 @@ pub async fn wait(pid: u32, timeout: Duration, ct: CancellationToken) -> WaitRes
 }
 
 #[cfg(test)]
+#[cfg(target_os = "linux")]
 mod tests {
     use super::*;
 
