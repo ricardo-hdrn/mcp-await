@@ -44,10 +44,10 @@ mcp-await cmd "curl -sf http://localhost:8080/health" --interval 2 --timeout 30
 |------|------------|----------------|
 | `wait_for_port` | `host`, `port` | TCP dial loop, 500ms interval |
 | `wait_for_file` | `path`, `event` (create/modify/delete) | inotify via `notify` crate, no polling |
-| `wait_for_url` | `url`, `expected_status` (default 200) | `curl` loop, 2s interval |
+| `wait_for_url` | `url`, `expected_status` (default 200) | `curl` loop, 2s interval (requires `curl`) |
 | `wait_for_pid` | `pid` | `/proc/{pid}` check, 500ms interval |
-| `wait_for_docker` | `container` | `docker wait <container>` |
-| `wait_for_gh_run` | `run_id`, `repo` (optional) | `gh run watch <run_id>` |
+| `wait_for_docker` | `container` | `docker wait` (requires `docker`) |
+| `wait_for_gh_run` | `run_id`, `repo` (optional) | `gh run watch` (requires `gh`) |
 | `wait_for_command` | `command`, `interval_seconds` (default 5) | Re-run via `sh -c` until exit 0 |
 | `cancel_watch` | `watch_id` | Cancels a non-blocking watch |
 

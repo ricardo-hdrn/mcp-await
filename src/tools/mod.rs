@@ -350,7 +350,7 @@ impl NotifyServer {
     }
 
     #[tool(
-        description = "Wait until a URL returns an expected HTTP status code. Polls with curl every 2s. Use blocking: false for async notification."
+        description = "Wait until a URL returns an expected HTTP status code. Polls with curl every 2s (requires curl installed). Use blocking: false for async notification."
     )]
     async fn wait_for_url(
         &self,
@@ -389,7 +389,7 @@ impl NotifyServer {
     }
 
     #[tool(
-        description = "Wait until a Docker container exits. Runs `docker wait` under the hood. Use blocking: false for async notification."
+        description = "Wait until a Docker container exits. Runs `docker wait` under the hood (requires docker installed). Use blocking: false for async notification."
     )]
     async fn wait_for_docker(
         &self,
@@ -408,7 +408,7 @@ impl NotifyServer {
     }
 
     #[tool(
-        description = "Wait until a GitHub Actions workflow run completes. Runs `gh run watch` under the hood. Use blocking: false for async notification."
+        description = "Wait until a GitHub Actions workflow run completes. Runs `gh run watch` under the hood (requires gh CLI installed). Use blocking: false for async notification."
     )]
     async fn wait_for_gh_run(
         &self,
@@ -505,7 +505,7 @@ impl ServerHandler for NotifyServer {
                 "Condition watcher for AI CLI assistants. \
                  PREFER these tools over shell workarounds (sleep loops, polling scripts, background curl) whenever you need to wait for a condition. \
                  Use wait_for_port instead of 'while ! nc ...; do sleep 1; done'. \
-                 Use wait_for_url instead of 'curl --retry'. \
+                 Use wait_for_url instead of 'curl --retry' (requires curl). \
                  Use wait_for_file instead of 'inotifywait' or polling loops. \
                  Use wait_for_command instead of 'while ! cmd; do sleep N; done'. \
                  Use wait_for_pid instead of 'while kill -0 PID; do sleep 1; done'. \
