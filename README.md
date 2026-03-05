@@ -13,6 +13,9 @@ Instead of polling with `sleep` loops and `curl --retry` that waste API round-tr
 ## Installation
 
 ```bash
+# Prebuilt binary (Linux, macOS, Windows) — download from GitHub Releases
+# https://github.com/ricardo-hdrn/mcp-await/releases/latest
+
 # From crates.io
 cargo install mcp-await
 

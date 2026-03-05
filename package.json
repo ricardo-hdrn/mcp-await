@@ -1,6 +1,6 @@
 {
   "name": "mcp-await",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "description": "Condition watcher MCP server + CLI for AI assistants — block until a port opens, a file changes, a URL responds, a process exits, and more",
   "license": "MIT",
   "repository": {
