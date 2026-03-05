@@ -6,7 +6,7 @@ const fs = require("fs");
 const path = require("path");
 const https = require("https");
 
-const VERSION = require("./package.json").version;
+const VERSION = require(path.join(__dirname, "package.json")).version;
 const REPO = "ricardo-hdrn/mcp-await";
 const BIN_DIR = path.join(__dirname, "bin");
 const NATIVE_NAME = process.platform === "win32" ? "mcp-await-native.exe" : "mcp-await-native";
