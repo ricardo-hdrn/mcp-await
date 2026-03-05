@@ -28,18 +28,27 @@ pub async fn wait(
             .output()
             .await;
 
-        if let Ok(output) = result {
-            if let Ok(code) = String::from_utf8_lossy(&output.stdout)
-                .trim()
-                .parse::<u16>()
-            {
-                if code == expected_status {
-                    return WaitResult::success(
-                        start.elapsed(),
-                        Some(format!("{} returned status {}", url, code)),
-                    );
+        match result {
+            Err(e) if e.kind() == std::io::ErrorKind::NotFound => {
+                return WaitResult::error(
+                    start.elapsed(),
+                    Some("curl is not installed — wait_for_url requires curl".into()),
+                );
+            }
+            Ok(output) => {
+                if let Ok(code) = String::from_utf8_lossy(&output.stdout)
+                    .trim()
+                    .parse::<u16>()
+                {
+                    if code == expected_status {
+                        return WaitResult::success(
+                            start.elapsed(),
+                            Some(format!("{} returned status {}", url, code)),
+                        );
+                    }
                 }
             }
+            _ => {}
         }
 
         if start.elapsed() >= timeout {

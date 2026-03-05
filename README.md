@@ -13,11 +13,10 @@ Instead of polling with `sleep` loops and `curl --retry` that waste API round-tr
 ## Installation
 
 ```bash
-# Prebuilt binary (Linux/macOS)
-curl -fsSL https://github.com/ricardo-hdrn/mcp-await/releases/latest/download/mcp-await-$(uname -m | sed 's/arm64/aarch64/')-$([ "$(uname)" = "Darwin" ] && echo "apple-darwin" || echo "unknown-linux-gnu").tar.gz \
-  | sudo tar xz -C /usr/local/bin/
+# Prebuilt binary (Linux, macOS, Windows) — download from GitHub Releases
+# https://github.com/ricardo-hdrn/mcp-await/releases/latest
 
-# From crates.io (requires Rust toolchain)
+# From crates.io
 cargo install mcp-await
 
 # From source
@@ -45,10 +44,10 @@ mcp-await cmd "curl -sf http://localhost:8080/health" --interval 2 --timeout 30
 |------|------------|----------------|
 | `wait_for_port` | `host`, `port` | TCP dial loop, 500ms interval |
 | `wait_for_file` | `path`, `event` (create/modify/delete) | inotify via `notify` crate, no polling |
-| `wait_for_url` | `url`, `expected_status` (default 200) | `curl` loop, 2s interval |
+| `wait_for_url` | `url`, `expected_status` (default 200) | `curl` loop, 2s interval (requires `curl`) |
 | `wait_for_pid` | `pid` | `/proc/{pid}` check, 500ms interval |
-| `wait_for_docker` | `container` | `docker wait <container>` |
-| `wait_for_gh_run` | `run_id`, `repo` (optional) | `gh run watch <run_id>` |
+| `wait_for_docker` | `container` | `docker wait` (requires `docker`) |
+| `wait_for_gh_run` | `run_id`, `repo` (optional) | `gh run watch` (requires `gh`) |
 | `wait_for_command` | `command`, `interval_seconds` (default 5) | Re-run via `sh -c` until exit 0 |
 | `cancel_watch` | `watch_id` | Cancels a non-blocking watch |
 
