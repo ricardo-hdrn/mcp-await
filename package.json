@@ -7,5 +7,14 @@
     "type": "git",
     "url": "https://github.com/ricardo-hdrn/mcp-await.git"
   },
-  "keywords": ["mcp", "ai", "cli", "watcher", "await"]
+  "keywords": ["mcp", "ai", "cli", "watcher", "await"],
+  "bin": {
+    "mcp-await": "bin/mcp-await.js"
+  },
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "mcpName": "io.github.ricardo-hdrn/mcp-await",
+  "os": ["darwin", "linux", "win32"],
+  "cpu": ["x64", "arm64"]
 }

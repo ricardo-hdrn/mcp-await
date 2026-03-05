@@ -1,0 +1,13 @@
+# Exclude Rust source and build artifacts
+/src
+/target
+/tests
+/.github
+/docs
+Cargo.toml
+Cargo.lock
+CLAUDE.md
+.claude/
+.gitignore
+bin/mcp-await-native
+bin/mcp-await-native.exe
