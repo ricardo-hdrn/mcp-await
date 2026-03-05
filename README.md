@@ -13,11 +13,10 @@ Instead of polling with `sleep` loops and `curl --retry` that waste API round-tr
 ## Installation
 
 ```bash
-# Prebuilt binary (Linux/macOS)
-curl -fsSL https://github.com/ricardo-hdrn/mcp-await/releases/latest/download/mcp-await-$(uname -m | sed 's/arm64/aarch64/')-$([ "$(uname)" = "Darwin" ] && echo "apple-darwin" || echo "unknown-linux-gnu").tar.gz \
-  | sudo tar xz -C /usr/local/bin/
+# Prebuilt binary (Linux, macOS, Windows) — download from GitHub Releases
+# https://github.com/ricardo-hdrn/mcp-await/releases/latest
 
-# From crates.io (requires Rust toolchain)
+# From crates.io
 cargo install mcp-await
 
 # From source
