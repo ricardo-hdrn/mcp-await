@@ -1,4 +1,6 @@
 /target
+bin/mcp-await-native
+bin/mcp-await-native.exe
 CLAUDE.md
 .claude/
 node_modules/

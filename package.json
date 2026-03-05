@@ -1,11 +1,20 @@
 {
   "name": "mcp-await",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "Condition watcher MCP server + CLI for AI assistants — block until a port opens, a file changes, a URL responds, a process exits, and more",
   "license": "MIT",
   "repository": {
     "type": "git",
     "url": "https://github.com/ricardo-hdrn/mcp-await.git"
   },
-  "keywords": ["mcp", "ai", "cli", "watcher", "await"]
+  "keywords": ["mcp", "ai", "cli", "watcher", "await"],
+  "bin": {
+    "mcp-await": "bin/mcp-await.js"
+  },
+  "scripts": {
+    "postinstall": "node install.js"
+  },
+  "mcpName": "io.github.ricardo-hdrn/mcp-await",
+  "os": ["darwin", "linux", "win32"],
+  "cpu": ["x64", "arm64"]
 }
