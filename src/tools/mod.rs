@@ -184,6 +184,10 @@ pub struct CommandParams {
     #[schemars(description = "Timeout in seconds (default: 300)")]
     pub timeout_seconds: Option<u64>,
     #[schemars(
+        description = "If stdout or stderr contains this string on a non-zero exit, abort immediately instead of retrying. Useful for detecting terminal failures (e.g. 'failed', 'canceled')."
+    )]
+    pub abort_pattern: Option<String>,
+    #[schemars(
         description = "If false, return immediately and push a notification when done (default: true)"
     )]
     pub blocking: Option<bool>,
@@ -428,7 +432,7 @@ impl NotifyServer {
     }
 
     #[tool(
-        description = "Wait until a shell command exits with code 0. Re-runs at the specified interval. Use blocking: false for async notification."
+        description = "Wait until a shell command exits with code 0. Re-runs at the specified interval. Set abort_pattern to fail fast on terminal errors (e.g. 'failed'). Use blocking: false for async notification."
     )]
     async fn wait_for_command(
         &self,
@@ -438,11 +442,14 @@ impl NotifyServer {
         let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
         let interval = Duration::from_secs(p.interval_seconds.unwrap_or(5));
         let cmd = p.command.clone();
+        let abort_pattern = p.abort_pattern.clone();
         self.handle_watch(
             ctx,
             p.blocking.unwrap_or(true),
             "command",
-            move |ct| async move { command::wait(&cmd, interval, timeout, ct).await },
+            move |ct| async move {
+                command::wait(&cmd, interval, timeout, abort_pattern.as_deref(), ct).await
+            },
         )
         .await
     }

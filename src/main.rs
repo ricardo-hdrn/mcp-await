@@ -76,6 +76,12 @@ enum Command {
         interval: u64,
         #[arg(short, long, default_value = "300")]
         timeout: u64,
+        #[arg(
+            short,
+            long,
+            help = "Abort immediately if stdout/stderr contains this string on failure"
+        )]
+        abort_pattern: Option<String>,
     },
 }
 
@@ -140,11 +146,13 @@ async fn run_cli(cmd: Command) -> Result<(), Box<dyn std::error::Error>> {
             command,
             interval,
             timeout,
+            abort_pattern,
         } => {
             tools::command::wait(
                 &command,
                 Duration::from_secs(interval),
                 Duration::from_secs(timeout),
+                abort_pattern.as_deref(),
                 ct,
             )
             .await

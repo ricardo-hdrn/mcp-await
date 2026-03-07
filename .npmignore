@@ -11,3 +11,5 @@ CLAUDE.md
 .gitignore
 bin/mcp-await-native
 bin/mcp-await-native.exe
+server.json
+.mcpregistry_*
