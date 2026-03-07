@@ -10,3 +10,5 @@ node_modules/
 .idea/
 .vscode/
 *.iml
+server.json
+.mcpregistry_*
