@@ -162,6 +162,35 @@ Non-blocking watches are exposed as MCP resources at `watch://{watch_id}`.
 - `list_resources` — returns all active and completed watches
 - `read_resource("watch://port-1")` — returns JSON with the watch status and result
 
+## Reinforcing Agent Usage
+
+Agents sometimes fall back to shell workarounds instead of using mcp-await. Add a snippet to your project's agent instructions file to reinforce the behavior:
+
+| Agent | Instructions file |
+|-------|-------------------|
+| Claude Code | `CLAUDE.md` |
+| Codex | `AGENTS.md` |
+| Gemini CLI | `GEMINI.md` |
+| Cursor | `.cursor/rules/` |
+| Windsurf | `.windsurfrules` |
+
+```markdown
+## Waiting for conditions
+
+Use mcp-await tools instead of shell workarounds:
+- `wait_for_port` instead of `while ! nc ...; do sleep 1; done`
+- `wait_for_url` instead of `curl --retry`
+- `wait_for_file` instead of polling loops
+- `wait_for_command` instead of `while ! cmd; do sleep N; done`
+
+Prefer `blocking: false` when there is independent work to do in parallel.
+```
+
+## Roadmap
+
+- [ ] Agent-level instructions to enforce mcp-await usage across all agents (system prompts, tool metadata hints)
+- [ ] Broader agent compatibility testing (Codex, Gemini CLI, Cursor, Windsurf)
+
 ## Development
 
 ```bash
