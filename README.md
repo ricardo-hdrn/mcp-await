@@ -10,6 +10,10 @@ Instead of polling with `sleep` loops and `curl --retry` that waste API round-tr
 
 ![demo](docs/images/demo.gif)
 
+<a href="https://glama.ai/mcp/servers/ricardo-hdrn/mcp-await">
+  <img width="380" height="200" src="https://glama.ai/mcp/servers/ricardo-hdrn/mcp-await/badge" alt="mcp-await MCP server" />
+</a>
+
 ## Installation
 
 ```bash
