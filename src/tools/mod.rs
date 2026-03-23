@@ -322,7 +322,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<PortParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT).min(MAX_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let host = p.host.clone();
         let port_num = p.port;
         self.handle_watch(
@@ -342,7 +346,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<FileParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT).min(MAX_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let path = p.path.clone();
         let event = p.event.clone();
         self.handle_watch(
@@ -362,7 +370,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<UrlParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT).min(MAX_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let url_str = p.url.clone();
         let expected = p.expected_status.unwrap_or(200);
         self.handle_watch(
@@ -382,7 +394,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<PidParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT).min(MAX_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let pid_num = p.pid;
         self.handle_watch(
             ctx,
@@ -401,7 +417,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<DockerParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT).min(MAX_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let container = p.container.clone();
         self.handle_watch(
             ctx,
@@ -420,7 +440,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<GhRunParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT).min(MAX_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let run_id = p.run_id.clone();
         let repo = p.repo.clone();
         self.handle_watch(
@@ -440,7 +464,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<CommandParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT).min(MAX_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let interval = Duration::from_secs(p.interval_seconds.unwrap_or(5));
         let cmd = p.command.clone();
         let abort_pattern = p.abort_pattern.clone();
