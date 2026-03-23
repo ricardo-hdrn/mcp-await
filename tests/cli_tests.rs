@@ -235,6 +235,7 @@ fn cli_url_timeout_no_server() {
         .stdout(predicate::str::contains("timeout"));
 }
 
+#[cfg(not(target_os = "windows"))]
 #[test]
 fn cli_url_success_with_listener() {
     let listener = TcpListener::bind("127.0.0.1:0").unwrap();
