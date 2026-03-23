@@ -23,6 +23,7 @@ use tokio::sync::RwLock;
 use tokio_util::sync::CancellationToken;
 
 const DEFAULT_TIMEOUT: u64 = 300;
+const MAX_TIMEOUT: u64 = 3600;
 
 // --- Common result type ---
 
@@ -101,7 +102,7 @@ pub struct PortParams {
     pub host: String,
     #[schemars(description = "TCP port number")]
     pub port: u16,
-    #[schemars(description = "Timeout in seconds (default: 300)")]
+    #[schemars(description = "Timeout in seconds (default: 300, max: 3600)")]
     pub timeout_seconds: Option<u64>,
     #[schemars(
         description = "If false, return immediately and push a notification when done (default: true)"
@@ -115,7 +116,7 @@ pub struct FileParams {
     pub path: String,
     #[schemars(description = "Event to wait for: create, modify, or delete")]
     pub event: String,
-    #[schemars(description = "Timeout in seconds (default: 300)")]
+    #[schemars(description = "Timeout in seconds (default: 300, max: 3600)")]
     pub timeout_seconds: Option<u64>,
     #[schemars(
         description = "If false, return immediately and push a notification when done (default: true)"
@@ -129,7 +130,7 @@ pub struct UrlParams {
     pub url: String,
     #[schemars(description = "Expected HTTP status code (default: 200)")]
     pub expected_status: Option<u16>,
-    #[schemars(description = "Timeout in seconds (default: 300)")]
+    #[schemars(description = "Timeout in seconds (default: 300, max: 3600)")]
     pub timeout_seconds: Option<u64>,
     #[schemars(
         description = "If false, return immediately and push a notification when done (default: true)"
@@ -141,7 +142,7 @@ pub struct UrlParams {
 pub struct PidParams {
     #[schemars(description = "Process ID to wait for")]
     pub pid: u32,
-    #[schemars(description = "Timeout in seconds (default: 300)")]
+    #[schemars(description = "Timeout in seconds (default: 300, max: 3600)")]
     pub timeout_seconds: Option<u64>,
     #[schemars(
         description = "If false, return immediately and push a notification when done (default: true)"
@@ -153,7 +154,7 @@ pub struct PidParams {
 pub struct DockerParams {
     #[schemars(description = "Docker container name or ID")]
     pub container: String,
-    #[schemars(description = "Timeout in seconds (default: 300)")]
+    #[schemars(description = "Timeout in seconds (default: 300, max: 3600)")]
     pub timeout_seconds: Option<u64>,
     #[schemars(
         description = "If false, return immediately and push a notification when done (default: true)"
@@ -167,7 +168,7 @@ pub struct GhRunParams {
     pub run_id: String,
     #[schemars(description = "Repository in owner/repo format (uses current repo if omitted)")]
     pub repo: Option<String>,
-    #[schemars(description = "Timeout in seconds (default: 300)")]
+    #[schemars(description = "Timeout in seconds (default: 300, max: 3600)")]
     pub timeout_seconds: Option<u64>,
     #[schemars(
         description = "If false, return immediately and push a notification when done (default: true)"
@@ -181,7 +182,7 @@ pub struct CommandParams {
     pub command: String,
     #[schemars(description = "Interval between retries in seconds (default: 5)")]
     pub interval_seconds: Option<u64>,
-    #[schemars(description = "Timeout in seconds (default: 300)")]
+    #[schemars(description = "Timeout in seconds (default: 300, max: 3600)")]
     pub timeout_seconds: Option<u64>,
     #[schemars(
         description = "If stdout or stderr contains this string on a non-zero exit, abort immediately instead of retrying. Useful for detecting terminal failures (e.g. 'failed', 'canceled')."
@@ -321,7 +322,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<PortParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let host = p.host.clone();
         let port_num = p.port;
         self.handle_watch(
@@ -341,7 +346,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<FileParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let path = p.path.clone();
         let event = p.event.clone();
         self.handle_watch(
@@ -361,7 +370,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<UrlParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let url_str = p.url.clone();
         let expected = p.expected_status.unwrap_or(200);
         self.handle_watch(
@@ -381,7 +394,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<PidParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let pid_num = p.pid;
         self.handle_watch(
             ctx,
@@ -400,7 +417,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<DockerParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let container = p.container.clone();
         self.handle_watch(
             ctx,
@@ -419,7 +440,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<GhRunParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let run_id = p.run_id.clone();
         let repo = p.repo.clone();
         self.handle_watch(
@@ -439,7 +464,11 @@ impl NotifyServer {
         ctx: RequestContext<RoleServer>,
         Parameters(p): Parameters<CommandParams>,
     ) -> Result<CallToolResult, ErrorData> {
-        let timeout = Duration::from_secs(p.timeout_seconds.unwrap_or(DEFAULT_TIMEOUT));
+        let timeout = Duration::from_secs(
+            p.timeout_seconds
+                .unwrap_or(DEFAULT_TIMEOUT)
+                .min(MAX_TIMEOUT),
+        );
         let interval = Duration::from_secs(p.interval_seconds.unwrap_or(5));
         let cmd = p.command.clone();
         let abort_pattern = p.abort_pattern.clone();
